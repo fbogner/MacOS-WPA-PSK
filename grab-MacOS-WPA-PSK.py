@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
     Grab the wireless key from Macs' non-volatile RAM (NVRAM)
     
@@ -28,17 +27,18 @@
     Changelog:
     1.0:    initial release. None of this 0.x crap. It works, so it's 1.0.
     1.01:   fix from michaelrice, to correctly parse the fields when there are SSIDs with spaces
+    1.02:	"Ported" to Python 2
 """
-from __future__ import print_function
 import os
 import binascii
+import sys
 
 # Get the current network's (encoded) PSK, available to anyone, with the nvram command:
 p = os.popen('nvram 36C28AB5-6566-4C50-9EBD-CBB920F83843:current-network',"r")
 nvRAMvariable = p.readline().split()
 
 # The second field contains the SSID.
-print ("Your SSID: ", end="")
+print ("Your SSID: ")
 
 # A while loop, where I manage my own integer iterator because Python makes it too hard to "next()" a string iterator
 # inside a 'for' loop:
@@ -54,22 +54,21 @@ while pos < len(currSSID):
         #print(hexifiedByte, end = " ")
         pos += 3
     else:
-        print(currSSID[pos], end="") # Assuming it was not escaped hex, it must be printable text, so print it.
+        sys.stdout.write(currSSID[pos]) # Assuming it was not escaped hex, it must be printable text, so print it.
         pos += 1
 
 print("")
 
 # The third field contains the PSK. There's no readable string here so print it all as hex, i.e., its ASCII representation.
-print ("Your PSK (hex representation): ", end="")
+print ("Your PSK (hex representation; verifyable using http://jorisvr.nl/wpapsk.html): ")
 pos = 0
 currPSK = nvRAMvariable[-1]
 while pos < len(currPSK):
     if currPSK[pos] == '%':
         hexifiedByte = currPSK[pos + 1: pos + 3]
-        print(hexifiedByte, end=" ")
+        sys.stdout.write(hexifiedByte)
         pos += 3
     else:
-        print(binascii.hexlify(currPSK[pos]), end=" ")
+        sys.stdout.write(currPSK[pos])
         pos += 1
-
 print("")
