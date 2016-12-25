@@ -11,4 +11,4 @@ Usage:
 Dependencies:
         Just python, which as a MacOS user you already have.
 
-Tested with MacOS 10.12.2.
+Tested with MacOS 10.12.2 and MacOS 10.11.6
